@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e95ac04c71fa5c143a1cc659de0b4472, type: 3}
+  m_Name: CombatSceneProfile
+  m_EditorClassIdentifier: 
+  Width: 100
+  Lenght: 100
+  MaxMosquitos: 5
+  SpawnMosquitoPeriod: 10
+  Gravity: 100
+  CameraInfo:
+    AngularRotationVelocity: 45
+    Monopod: {x: 0, y: 2, z: -7}
+    Tangent: 20
+  FrogProfiles:
+  - {fileID: 11400000, guid: 32f9a11ea0d09144f950e31a0346b094, type: 2}
+  MosquitoProfiles:
+  - {fileID: 11400000, guid: 8c1da53bd73875d44a44f6db9acf6fc9, type: 2}
