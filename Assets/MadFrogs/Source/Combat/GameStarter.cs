@@ -17,13 +17,14 @@ namespace Gameplay
             FrogController.CreateInstance();
             MosquitoController.CreateInstance();
             CameraController.CreateInstance();
+            ScoreController.CreateInstance();
         }
 
         protected override void Start()
         {
             base.Start();
 
-            FrogController.Instance.CreateTestFrog();
+            FrogController.Instance.CreateFrogs();
         }
 
         protected override void OnDestroy()
@@ -35,6 +36,7 @@ namespace Gameplay
             CombatController.CallDestroy();
             SceneObjectController.CallDestroy();
             CameraController.CallDestroy();
+            ScoreController.CallDestroy();
         }
 
     }

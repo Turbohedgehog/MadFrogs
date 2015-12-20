@@ -19,12 +19,15 @@ namespace Gameplay
             if (frogGo == null) return null;
 
             var frog = frogGo.AddComponent<Frog>();
+            
             frog.Init(profile);
 
             frog.transform.parent = transform;
 
             return frog;
         }
+
+        
 
         public void RegisterFrog(Frog frog)
         {
@@ -41,6 +44,10 @@ namespace Gameplay
         public IEnumerable<Frog> GetFrogs(Func<Frog, bool> predicate = null)
         {
             return predicate == null ? _frogs : _frogs.Where(predicate);
+        }
+
+        public List<Frog> GetFrogsList() {
+            return _frogs;
         }
 
         public void CreateTestFrog()
@@ -62,6 +69,24 @@ namespace Gameplay
                 frog.transform.parent = transform;
             }
 
+        }
+
+        public void CreateFrogs()
+        {
+            if (!GameStarter.Instance.SceneProfile.FrogProfiles.Any()) return;
+
+            var profilesCount = GameStarter.Instance.SceneProfile.FrogProfiles.Count;
+            var hWidth = GameStarter.Instance.SceneProfile.Width / 4f;
+            var hLenght = GameStarter.Instance.SceneProfile.Lenght / 4f;
+
+            for (var i = 0; i < profilesCount; ++i) {
+                var profile = GameStarter.Instance.SceneProfile.FrogProfiles[i];
+                var x = UnityEngine.Random.Range(0f, hWidth);
+                var z = UnityEngine.Random.Range(0f, hLenght);
+                var frog = CreateFrog(profile, new Vector3(x, 0f, z), Quaternion.identity);
+
+                frog.transform.parent = transform;
+            }
         }
 
         public void OnMosquitoRemoved(Mosquito mosquito)

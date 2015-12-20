@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Gameplay
@@ -25,24 +26,8 @@ namespace Gameplay
         public bool IsSomebodyAttacksMe { get; private set; }
         public Frog LastDamageDealler { get; private set; }
         public Frog AttackTarget { get; private set; }
-
-        private State _currentState;
-
-        public State CurrentState
-        {
-            get { return _currentState; }
-            private set
-            {
-                
-                _currentState = value;
-                if (_currentState == State.Capricioning)
-                {
-                    var zzz = 0;
-                    ++zzz;
-                }
-
-            }
-        }
+        public int Score { get; private set; }
+        public State CurrentState { get; private set; }
 
         public bool IsVisible
         {
@@ -73,6 +58,8 @@ namespace Gameplay
             _nn = new AI.FrogNN(profile.AIData.Config);
             Profile = profile;
 
+            SetupMaterial();
+
             _moving = gameObject.AddComponent<FrogMove>();
             _health = gameObject.AddComponent<FrogHealth>();
             _vision = gameObject.AddComponent<FrogVision>();
@@ -82,6 +69,39 @@ namespace Gameplay
             _health.Init();
             _vision.Init();
             _attack.Init();
+
+        }
+
+        public static List<T> FindComponents<T>(Transform transform) where T : Component
+        {
+            var components = transform.gameObject.GetComponents<T>();
+
+            var res = new List<T>();
+
+            if(components != null)
+                res.AddRange(components);
+
+            for (var i = 0; i < transform.childCount; ++i)
+            {
+                res.AddRange(FindComponents<T>(transform.GetChild(i)));
+            }
+
+            return res;
+
+        }
+
+        private void SetupMaterial()
+        {
+
+            var renderers = FindComponents<Renderer>(transform);
+
+            for (var i = 0; i < renderers.Count; ++i)
+            {
+                var currentRenderer = renderers[i];
+                if (currentRenderer.material == null || !currentRenderer.material.HasProperty("_EmissionColor")) continue;
+
+                currentRenderer.material.SetColor("_EmissionColor", Profile.FrogColor);
+            }
 
         }
 
@@ -112,6 +132,7 @@ namespace Gameplay
                 {
                     Heal(mosquito.Profile.HealHealth);
                     mosquito.Catch(this);
+                    ++Score;
                 }
             }
 
