@@ -8,6 +8,11 @@ namespace Gameplay
         private Frog _frog;
         public float Health { get; private set; }
 
+        public bool IsMaxHealth
+        {
+            get { return Health >= _frog.Profile.PersonalData.Health; }
+        }
+
         public void Init()
         {
             _frog = gameObject.GetComponent<Frog>();

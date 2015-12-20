@@ -413,7 +413,7 @@ public class NNConfigurator : EditorWindow
         var input = example.Input;
         var data = new[]
             {
-                input.Health, input.NearMosquitoDistance, (float) input.EnemiesCount, input.IsSomebodyAttacksMe ? 1f : 0f
+                input.Health, input.NearMosquitoDistance, input.NearEnemyDistance, (float) input.EnemiesCount, input.IsSomebodyAttacksMe ? 1f : 0f
             };
 
         _oneStepNN.PushData(data);

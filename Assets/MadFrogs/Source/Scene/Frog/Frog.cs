@@ -28,6 +28,8 @@ namespace Gameplay
         public Frog AttackTarget { get; private set; }
         public int Score { get; private set; }
         public State CurrentState { get; private set; }
+        public float Health { get { return _health.Health / Profile.PersonalData.Health * 100f; } }
+        public AI.FrogNN.FrogAction CurrentNNState { get; private set; }
 
         public bool IsVisible
         {
@@ -114,7 +116,11 @@ namespace Gameplay
 
         private void UpdateState()
         {
-            if (CurrentState == State.Capricioning) CurrentState = State.Idle;
+            if (CurrentState == State.Capricioning || CurrentState == State.Hiding)
+            {
+                CurrentState = State.Idle;
+            }
+
             if (CurrentState != State.Idle) return;
 
             ChooseState();
@@ -130,7 +136,7 @@ namespace Gameplay
                 var dir = mPos - fPos;
                 if (dir.sqrMagnitude <= 0.01f)
                 {
-                    Heal(mosquito.Profile.HealHealth);
+                    // Heal(mosquito.Profile.HealHealth);
                     mosquito.Catch(this);
                     ++Score;
                 }
@@ -179,7 +185,7 @@ namespace Gameplay
                 ? 1000f
                 : (transform.position - mosquito.transform.position).magnitude;
 
-            var health = _health.Health;
+            var health = Health;
             var isSomebodyAttacksMe = LastDamageDealler != null && LastDamageDealler.AttackTarget == this;
 
             var data = new[] { health, nearMosquitoDistance, nearEnemyDistance, (float)enemiesCount, isSomebodyAttacksMe ? 1f : 0f };
@@ -190,10 +196,10 @@ namespace Gameplay
 
         private State UseState(int nnIndex)
         {
-            var nnState = (AI.FrogNN.FrogAction) nnIndex;
+            CurrentNNState = (AI.FrogNN.FrogAction) nnIndex;
             AttackTarget = null;
 
-            switch (nnState)
+            switch (CurrentNNState)
             {
                 case AI.FrogNN.FrogAction.Attack:
                     if (LastDamageDealler != null && LastDamageDealler.AttackTarget == this)
@@ -222,7 +228,13 @@ namespace Gameplay
                     return State.Fighting;
 
                 case AI.FrogNN.FrogAction.BeCapricious:
-                    // return State.Capricioning; // << ToDo: make realization
+                    /*
+                    if (_health.IsMaxHealth)
+                    {
+                        return UseState((int) AI.FrogNN.FrogAction.CatchMosquito);
+                    }
+                    */
+                    return State.Capricioning;
 
                 case AI.FrogNN.FrogAction.CatchMosquito:
                     if (_moving == null) return State.Idle;
@@ -233,7 +245,12 @@ namespace Gameplay
                     return State.Moving;
 
                 case AI.FrogNN.FrogAction.Hide:
-                    return State.Capricioning; // << Temp solution
+                    /*
+                    if (_health.IsMaxHealth) {
+                        return UseState((int) AI.FrogNN.FrogAction.CatchMosquito);
+                    }
+                    */
+                    return State.Hiding; // << Temp solution
             }
 
             return State.Idle;
